@@ -5,38 +5,37 @@ import Exceptions.MaxWithdraw;
 public class SavingsAccount extends BankAccount {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
-	float rate= .05f;
+	//@ spec_public
+	float rate = .05f;
+	//@ spec_public
 	double maxWithLimit;
-//	String type;
-	
-	public SavingsAccount(String name, double balance,double maxWithLimit) {
+
+	//@ requires name != null && balance >= 2000 && maxWithLimit > 0;
+	//@ ensures this.name == name && this.maxWithLimit == maxWithLimit;
+	//@ ensures getbalance() == balance;
+	public SavingsAccount(String name, double balance, double maxWithLimit) {
 		super(name, balance, 2000);
-		this.maxWithLimit= maxWithLimit;
-//		this.type="Savings Account";
+		this.maxWithLimit = maxWithLimit;
 	}
-	
-	public double getNetBalance()
-	{
-		double NetBalance= getbalance()+(getbalance()*rate);
+
+	//@ ensures \result == getbalance() + (getbalance() * rate);
+	public double getNetBalance() {
+		double NetBalance = getbalance() + (getbalance() * rate);
 		return NetBalance;
 	}
-	
-	public void withdraw(double amount) throws MaxWithdraw, MaxBalance
-	{
-		if(amount<maxWithLimit)
-		{
+
+	//@ requires amount > 0 && amount <= maxWithLimit;
+	//@ ensures \old(getbalance()) >= amount;
+	//@ signals (MaxWithdraw e) amount > maxWithLimit;
+	//@ signals (MaxBalance e) \old(getbalance()) - amount < min_balance;
+	public void withdraw(double amount) throws MaxWithdraw, MaxBalance {
+		if (amount < maxWithLimit) {
 			super.withdraw(amount);
-			
-		}
-		else
-		{
+		} else {
 			throw new MaxWithdraw("Maximum Withdraw Limit Exceed");
 		}
-		
 	}
-	
-	
 }
